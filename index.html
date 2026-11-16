@@ -157,13 +157,8 @@ enctype="multipart/form-data">
 <br><br>
 Please send your payment using the GCash QR code or account details below.
 
-<img
-src="gcash-qr.png"
-alt="4PLUG GCash QR Code"
-class="qr-image"
->
-
 <div class="payment-details">
+
 <strong>GCASH NUMBER:</strong>
 <br>
 <span>09927538966</span>
@@ -173,7 +168,21 @@ class="qr-image"
 <strong>ACCOUNT NAME:</strong>
 <br>
 <span>JE****A P.</span>
+
 </div>
+
+<strong>GCASH QR CODE:</strong>
+
+<img
+src="./gcash-qr.png"
+alt="GCash QR Code"
+class="qr-image"
+onerror="this.style.display='none';document.getElementById('qrError').style.display='block';"
+>
+
+<p id="qrError" style="display:none;color:#ffaaaa;text-align:center">
+GCash QR image not found. Please upload gcash-qr.png.
+</p>
 
 <strong>AMOUNT TO PAY:</strong>
 <br>
