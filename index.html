@@ -132,8 +132,9 @@ enctype="multipart/form-data">
 <input type="hidden" name="_subject" value="NEW 4PLUG ORDER - PAYMENT RECEIPT">
 <input type="hidden" name="_template" value="table">
 <input type="hidden" name="_captcha" value="true">
-<input type="hidden" name="_next" value="https://38sosa.github.io/4PLUG/">
+<input type="hidden" name="_next" value="https://4plugstorec.netlify.app/">
 <input type="hidden" name="Order Details" id="orderSummary">
+<input type="hidden" name="Order Number" id="formOrderId">
 <input type="hidden" name="Order Status" value="PENDING PAYMENT VERIFICATION">
 
 <label>FULL NAME</label>
@@ -163,20 +164,16 @@ Scan this QR code using your GCash app.
 <br>
 <span>09927538966</span>
 <br><br>
-
 <strong>ACCOUNT NAME:</strong>
 <br>
 <span>JE****A P.</span>
 <br><br>
-
 <strong>GCASH QR CODE:</strong>
 
-<img
-src="gcash%20qr.png"
+<img src="gcash%20qr.png"
 alt="GCash QR Code"
 class="qr-image"
-onerror="this.alt='GCash QR image not found';"
->
+onerror="this.alt='GCash QR image not found';">
 
 <strong>AMOUNT TO PAY:</strong>
 <br>
@@ -241,7 +238,19 @@ SUBMIT ORDER FOR VERIFICATION
 
 <footer>© 2026 4PLUG. ALL RIGHTS RESERVED.</footer>
 
+<!-- EmailJS browser SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
 <script>
+/* EMAILJS CONFIGURATION */
+const EMAILJS_SERVICE_ID = "service_j6a29hq";
+const EMAILJS_TEMPLATE_ID = "template_2oxrci3";
+const EMAILJS_PUBLIC_KEY = "h5gm-AlpKaS2_FI2u";
+
+emailjs.init({
+  publicKey: EMAILJS_PUBLIC_KEY
+});
+
 let cart = [];
 
 function addToCart(name,price,sizeId,qtyId){
@@ -336,17 +345,33 @@ behavior:"smooth",block:"start"
 });
 }
 
-document.getElementById("orderForm").addEventListener("submit",function(e){
-if(cart.length===0){
+/* GENERATE ORDER NUMBER */
+function generateOrderNumber(){
+const date=new Date();
+const datePart=
+date.getFullYear().toString()+
+String(date.getMonth()+1).padStart(2,"0")+
+String(date.getDate()).padStart(2,"0");
+
+const randomPart=Math.floor(1000+Math.random()*9000);
+
+return "4PLUG-"+datePart+"-"+randomPart;
+}
+
+/* ORDER SUBMISSION + CUSTOMER EMAIL */
+document.getElementById("orderForm").addEventListener("submit",async function(e){
+
 e.preventDefault();
+
+if(cart.length===0){
 alert("Your cart is empty.");
 return;
 }
 
+const form=this;
 const receipt=document.getElementById("paymentReceipt").files[0];
 
 if(!receipt){
-e.preventDefault();
 alert("Please upload your GCash payment receipt.");
 return;
 }
@@ -354,13 +379,11 @@ return;
 const allowedTypes=["image/jpeg","image/png"];
 
 if(!allowedTypes.includes(receipt.type)){
-e.preventDefault();
 alert("Please upload a JPG or PNG image.");
 return;
 }
 
 if(receipt.size>8*1024*1024){
-e.preventDefault();
 alert("Receipt image must be smaller than 8 MB.");
 return;
 }
@@ -370,6 +393,56 @@ updateOrderSummary();
 const btn=document.getElementById("submitBtn");
 btn.disabled=true;
 btn.textContent="SENDING ORDER...";
+
+const customerName=form.elements["Customer Name"].value.trim();
+const customerEmail=form.elements["Customer Email"].value.trim();
+const paymentMethod=form.elements["Payment Method"].value;
+
+const total=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
+
+const orderId=generateOrderNumber();
+
+document.getElementById("formOrderId").value=orderId;
+
+const orderDetails=document.getElementById("orderSummary").value;
+
+/* PARAMETERS MUST MATCH EMAILJS TEMPLATE VARIABLES */
+const templateParams={
+email:customerEmail,
+customer_name:customerName,
+order_details:orderDetails,
+order_id:orderId,
+total:"₱"+total.toLocaleString("en-PH"),
+payment_method:paymentMethod
+};
+
+try{
+
+/* SEND CUSTOMER ORDER CONFIRMATION */
+await emailjs.send(
+EMAILJS_SERVICE_ID,
+EMAILJS_TEMPLATE_ID,
+templateParams
+);
+
+btn.textContent="SUBMITTING YOUR ORDER...";
+
+/* SUBMIT RECEIPT AND ORDER DETAILS TO FORMSubmit */
+form.submit();
+
+}catch(error){
+
+console.error("EmailJS error:",error);
+
+btn.disabled=false;
+btn.textContent="SUBMIT ORDER FOR VERIFICATION";
+
+alert(
+"Your order confirmation email could not be sent. Please try again. Your order has not been submitted yet."
+);
+
+}
+
 });
 </script>
 
