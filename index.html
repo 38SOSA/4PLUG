@@ -39,9 +39,10 @@ padding:12px;background:#21172a;border:1px solid #69417e;color:white;border-radi
 .checkout p{color:#ae9bb8;margin-bottom:15px;font-size:13px;line-height:1.6}
 .checkout input,.checkout textarea,.checkout select{display:block;width:100%;margin-bottom:12px}
 .checkout textarea{min-height:85px;resize:vertical}
-.payment-note{background:#100b16;border:1px solid #69417e;padding:14px;border-radius:4px;color:#c9a8d8;font-size:12px;line-height:1.6;margin:12px 0}
+.payment-note{background:#100b16;border:1px solid #69417e;padding:14px;border-radius:4px;color:#c9a8d8;font-size:12px;line-height:1.8;margin:12px 0}
 .payment-note strong{color:white}
 .payment-note .amount{font-size:23px;color:#d49aff;font-weight:bold}
+.qr-image{display:block;width:100%;max-width:280px;margin:15px auto;background:white;padding:10px;border-radius:8px}
 footer{text-align:center;padding:30px;border-top:1px solid #382344;color:#a99aaa;font-size:12px}
 button:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:550px){
@@ -138,36 +139,53 @@ method="POST">
 
 <label>PAYMENT METHOD</label>
 <select name="Payment Method" required>
-<option value="GCash">GCash</option>
+<option value="GCash QR">GCash QR</option>
 </select>
 
 <div class="payment-note">
 <strong>GCASH PAYMENT</strong>
-<br><br>
-Please send your payment to the GCash account below.
 
 <br><br>
-<strong>GCASH NUMBER:</strong>
-<br>
-<span id="gcashNumber">09XXXXXXXXX</span>
+Scan this QR code using your GCash app.
 
-<br><br>
-<strong>ACCOUNT NAME:</strong>
-<br>
-<span>YOUR ACCOUNT NAME</span>
+<img
+src="gcash-qr.png"
+alt="4PLUG GCash QR Code"
+class="qr-image"
+>
 
-<br><br>
 <strong>AMOUNT TO PAY:</strong>
 <br>
 <span class="amount" id="gcashAmount">₱0</span>
 
+<br><br>
+<strong>HOW TO PAY:</strong>
 <br>
-<button type="button" class="order" onclick="copyGCash()">COPY GCASH NUMBER</button>
+1. Open your GCash app.
+<br>
+2. Scan the QR code above.
+<br>
+3. Enter the exact amount shown.
+<br>
+4. Confirm the recipient details.
+<br>
+5. Complete your payment.
+<br>
+6. Enter your payment reference number below.
 
 <br><br>
-Please verify the recipient before sending payment.
-Your order is PENDING PAYMENT until payment is verified.
+<strong>IMPORTANT:</strong>
+<br>
+Your order will remain PENDING PAYMENT until the payment is manually verified.
 </div>
+
+<label>GCASH REFERENCE NUMBER</label>
+<input
+type="text"
+name="GCash Reference Number"
+placeholder="Enter your GCash reference number"
+required
+>
 
 <button class="order" type="submit" id="submitBtn">PLACE ORDER</button>
 
@@ -242,6 +260,7 @@ container.appendChild(row);
 });
 
 const total=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
+
 document.getElementById("total").textContent=
 "TOTAL: ₱"+total.toLocaleString("en-PH");
 
@@ -252,13 +271,13 @@ function updateOrderSummary(){
 const summary=cart.map(item=>
 item.name+" | Size: "+item.size+
 " | Quantity: "+item.qty+
-" | Subtotal: ₱"+(item.price*item.qty)
+" | Subtotal: ₱"+(item.price*item.qty).toLocaleString("en-PH")
 ).join("\n");
 
 const total=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
 
 document.getElementById("orderSummary").value=
-summary+"\nTOTAL: ₱"+total;
+summary+"\nTOTAL: ₱"+total.toLocaleString("en-PH");
 
 document.getElementById("gcashAmount").textContent=
 "₱"+total.toLocaleString("en-PH");
@@ -273,19 +292,6 @@ updateOrderSummary();
 document.getElementById("checkout").scrollIntoView({
 behavior:"smooth",block:"start"
 });
-}
-
-function copyGCash(){
-const number=document.getElementById("gcashNumber").textContent;
-
-if(!navigator.clipboard){
-alert("Please copy the GCash number manually: "+number);
-return;
-}
-
-navigator.clipboard.writeText(number)
-.then(()=>alert("GCash number copied!"))
-.catch(()=>alert("Please copy the GCash number manually: "+number));
 }
 
 document.getElementById("orderForm").addEventListener("submit",function(e){
