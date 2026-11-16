@@ -25,7 +25,7 @@ main{padding:35px 7% 70px}
 .price{color:#d49aff;margin-top:8px;font-weight:bold}
 .product label,.checkout label{display:block;margin-top:13px;margin-bottom:6px;color:#c9a8d8;font-size:12px}
 .product select,.product input,.checkout input,.checkout textarea,.checkout select{
-  padding:12px;background:#21172a;border:1px solid #69417e;color:white;border-radius:3px;font-family:Arial,sans-serif
+padding:12px;background:#21172a;border:1px solid #69417e;color:white;border-radius:3px;font-family:Arial,sans-serif
 }
 .product input{width:65px}
 .order{display:inline-block;margin-top:13px;padding:12px 22px;background:#a34bd1;color:white;border:0;text-decoration:none;font-size:12px;font-weight:bold;border-radius:3px;cursor:pointer}
@@ -40,6 +40,8 @@ main{padding:35px 7% 70px}
 .checkout input,.checkout textarea,.checkout select{display:block;width:100%;margin-bottom:12px}
 .checkout textarea{min-height:85px;resize:vertical}
 .payment-note{background:#100b16;border:1px solid #69417e;padding:14px;border-radius:4px;color:#c9a8d8;font-size:12px;line-height:1.6;margin:12px 0}
+.payment-note strong{color:white}
+.payment-note .amount{font-size:23px;color:#d49aff;font-weight:bold}
 footer{text-align:center;padding:30px;border-top:1px solid #382344;color:#a99aaa;font-size:12px}
 button:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:550px){
@@ -54,124 +56,122 @@ main{padding:30px 15px}
 <body>
 
 <header>
-  <div class="brand">4PLUG®</div>
-  <a href="#collection">COLLECTION</a>
+<div class="brand">4PLUG®</div>
+<a href="#collection">COLLECTION</a>
 </header>
 
 <section class="hero">
-  <h1>4PLUG</h1>
-  <p>BUILT DIFFERENT. WORN DIFFERENT.</p>
+<h1>4PLUG</h1>
+<p>BUILT DIFFERENT. WORN DIFFERENT.</p>
 </section>
 
 <main id="collection">
 
 <div class="heading">
-  <h2>NEW COLLECTION</h2>
-  <p>OFFICIAL 4PLUG DROP</p>
+<h2>NEW COLLECTION</h2>
+<p>OFFICIAL 4PLUG DROP</p>
 </div>
 
 <div class="products">
 
 <div class="product">
-  <img src="4g%20black.jpg" alt="4PLUG Black Tee">
-  <h3>4PLUG BLACK TEE</h3>
-  <p class="price">₱550</p>
-
-  <label>SIZE</label>
-  <select id="blackSize">
-    <option>S</option>
-    <option>M</option>
-    <option>L</option>
-    <option>XL</option>
-  </select>
-
-  <label>QUANTITY</label>
-  <input id="blackQty" type="number" min="1" max="20" value="1">
-
-  <br>
-  <button class="order" onclick="addToCart('BLACK TEE',550,'blackSize','blackQty')">
-    ADD TO CART
-  </button>
+<img src="4g%20black.jpg" alt="4PLUG Black Tee">
+<h3>4PLUG BLACK TEE</h3>
+<p class="price">₱550</p>
+<label>SIZE</label>
+<select id="blackSize">
+<option>S</option><option>M</option><option>L</option><option>XL</option>
+</select>
+<label>QUANTITY</label>
+<input id="blackQty" type="number" min="1" max="20" value="1">
+<br>
+<button class="order" onclick="addToCart('BLACK TEE',550,'blackSize','blackQty')">ADD TO CART</button>
 </div>
 
 <div class="product">
-  <img src="4g.jpg" alt="4PLUG White Tee">
-  <h3>4PLUG WHITE TEE</h3>
-  <p class="price">₱550</p>
-
-  <label>SIZE</label>
-  <select id="whiteSize">
-    <option>S</option>
-    <option>M</option>
-    <option>L</option>
-    <option>XL</option>
-  </select>
-
-  <label>QUANTITY</label>
-  <input id="whiteQty" type="number" min="1" max="20" value="1">
-
-  <br>
-  <button class="order" onclick="addToCart('WHITE TEE',550,'whiteSize','whiteQty')">
-    ADD TO CART
-  </button>
+<img src="4g.jpg" alt="4PLUG White Tee">
+<h3>4PLUG WHITE TEE</h3>
+<p class="price">₱550</p>
+<label>SIZE</label>
+<select id="whiteSize">
+<option>S</option><option>M</option><option>L</option><option>XL</option>
+</select>
+<label>QUANTITY</label>
+<input id="whiteQty" type="number" min="1" max="20" value="1">
+<br>
+<button class="order" onclick="addToCart('WHITE TEE',550,'whiteSize','whiteQty')">ADD TO CART</button>
 </div>
 
 </div>
 
 <section class="cart">
-  <h2>YOUR CART</h2>
-  <div id="cartItems">Your cart is empty.</div>
-  <div class="total" id="total">TOTAL: ₱0</div>
-
-  <button class="order" id="checkoutBtn" onclick="showCheckout()" disabled>
-    PROCEED TO CHECKOUT
-  </button>
+<h2>YOUR CART</h2>
+<div id="cartItems">Your cart is empty.</div>
+<div class="total" id="total">TOTAL: ₱0</div>
+<button class="order" id="checkoutBtn" onclick="showCheckout()" disabled>PROCEED TO CHECKOUT</button>
 </section>
 
 <section class="checkout" id="checkout">
-  <h2>CHECKOUT</h2>
-  <p>COMPLETE YOUR DETAILS TO PLACE YOUR ORDER.</p>
+<h2>CHECKOUT</h2>
+<p>COMPLETE YOUR DETAILS TO PLACE YOUR ORDER.</p>
 
-  <form id="orderForm"
-    action="https://formsubmit.co/kentrellpaz@gmail.com"
-    method="POST">
+<form id="orderForm"
+action="https://formsubmit.co/kentrellpaz@gmail.com"
+method="POST">
 
-    <input type="hidden" name="_subject" value="NEW 4PLUG ORDER">
-    <input type="hidden" name="_template" value="table">
-    <input type="hidden" name="_captcha" value="true">
-    <input type="hidden" name="Order Details" id="orderSummary">
+<input type="hidden" name="_subject" value="NEW 4PLUG ORDER">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_captcha" value="true">
+<input type="hidden" name="Order Details" id="orderSummary">
 
-    <label>FULL NAME</label>
-    <input type="text" name="Customer Name" placeholder="Your full name" required>
+<label>FULL NAME</label>
+<input type="text" name="Customer Name" placeholder="Your full name" required>
 
-    <label>EMAIL ADDRESS</label>
-    <input type="email" name="Customer Email" placeholder="Your email address" required>
+<label>EMAIL ADDRESS</label>
+<input type="email" name="Customer Email" placeholder="Your email address" required>
 
-    <label>CONTACT NUMBER</label>
-    <input type="tel" name="Contact Number" placeholder="Your contact number" required>
+<label>CONTACT NUMBER</label>
+<input type="tel" name="Contact Number" placeholder="Your contact number" required>
 
-    <label>DELIVERY ADDRESS</label>
-    <textarea name="Delivery Address" placeholder="Complete delivery address" required></textarea>
+<label>DELIVERY ADDRESS</label>
+<textarea name="Delivery Address" placeholder="Complete delivery address" required></textarea>
 
-    <label>PAYMENT METHOD</label>
-    <select name="Payment Method" required>
-      <option value="GCash">GCash</option>
-    </select>
+<label>PAYMENT METHOD</label>
+<select name="Payment Method" required>
+<option value="GCash">GCash</option>
+</select>
 
-    <div class="payment-note">
-      <strong>GCASH PAYMENT</strong>
-      <br><br>
-      Payment instructions will be sent privately after we receive your order.
-      Please wait for confirmation before sending payment.
-      <br><br>
-      Your order is not confirmed as paid until payment has been verified.
-    </div>
+<div class="payment-note">
+<strong>GCASH PAYMENT</strong>
+<br><br>
+Please send your payment to the GCash account below.
 
-    <button class="order" type="submit" id="submitBtn">
-      PLACE ORDER
-    </button>
+<br><br>
+<strong>GCASH NUMBER:</strong>
+<br>
+<span id="gcashNumber">09XXXXXXXXX</span>
 
-  </form>
+<br><br>
+<strong>ACCOUNT NAME:</strong>
+<br>
+<span>YOUR ACCOUNT NAME</span>
+
+<br><br>
+<strong>AMOUNT TO PAY:</strong>
+<br>
+<span class="amount" id="gcashAmount">₱0</span>
+
+<br>
+<button type="button" class="order" onclick="copyGCash()">COPY GCASH NUMBER</button>
+
+<br><br>
+Please verify the recipient before sending payment.
+Your order is PENDING PAYMENT until payment is verified.
+</div>
+
+<button class="order" type="submit" id="submitBtn">PLACE ORDER</button>
+
+</form>
 </section>
 
 </main>
@@ -182,117 +182,124 @@ main{padding:30px 15px}
 let cart = [];
 
 function addToCart(name,price,sizeId,qtyId){
-  const size = document.getElementById(sizeId).value;
-  const qty = Number(document.getElementById(qtyId).value);
+const size=document.getElementById(sizeId).value;
+const qty=Number(document.getElementById(qtyId).value);
 
-  if(!Number.isInteger(qty) || qty < 1 || qty > 20){
-    alert("Please enter quantity from 1 to 20.");
-    return;
-  }
+if(!Number.isInteger(qty)||qty<1||qty>20){
+alert("Please enter quantity from 1 to 20.");
+return;
+}
 
-  const existing = cart.find(item =>
-    item.name === name && item.size === size
-  );
+const existing=cart.find(item=>item.name===name&&item.size===size);
 
-  if(existing){
-    if(existing.qty + qty > 20){
-      alert("Maximum quantity is 20.");
-      return;
-    }
-    existing.qty += qty;
-  }else{
-    cart.push({name,price,size,qty});
-  }
+if(existing){
+if(existing.qty+qty>20){
+alert("Maximum quantity is 20.");
+return;
+}
+existing.qty+=qty;
+}else{
+cart.push({name,price,size,qty});
+}
 
-  renderCart();
-  alert(name + " added to cart!");
+renderCart();
+alert(name+" added to cart!");
 }
 
 function renderCart(){
-  const container = document.getElementById("cartItems");
-  const checkoutBtn = document.getElementById("checkoutBtn");
+const container=document.getElementById("cartItems");
+const checkoutBtn=document.getElementById("checkoutBtn");
 
-  if(cart.length === 0){
-    container.textContent = "Your cart is empty.";
-    document.getElementById("total").textContent = "TOTAL: ₱0";
-    checkoutBtn.disabled = true;
-    document.getElementById("checkout").style.display = "none";
-    return;
-  }
+if(cart.length===0){
+container.textContent="Your cart is empty.";
+document.getElementById("total").textContent="TOTAL: ₱0";
+checkoutBtn.disabled=true;
+document.getElementById("checkout").style.display="none";
+return;
+}
 
-  container.innerHTML = "";
+container.innerHTML="";
 
-  cart.forEach((item,index) => {
-    const row = document.createElement("div");
-    row.className = "cart-item";
+cart.forEach((item,index)=>{
+const row=document.createElement("div");
+row.className="cart-item";
 
-    const details = document.createElement("span");
-    details.textContent =
-      item.name + " | SIZE " + item.size +
-      " | QTY " + item.qty +
-      " | ₱" + (item.price * item.qty).toLocaleString("en-PH");
+const details=document.createElement("span");
+details.textContent=item.name+" | SIZE "+item.size+
+" | QTY "+item.qty+" | ₱"+
+(item.price*item.qty).toLocaleString("en-PH");
 
-    const remove = document.createElement("button");
-    remove.className = "remove";
-    remove.textContent = "REMOVE";
-    remove.onclick = () => {
-      cart.splice(index,1);
-      renderCart();
-    };
+const remove=document.createElement("button");
+remove.className="remove";
+remove.textContent="REMOVE";
+remove.onclick=()=>{
+cart.splice(index,1);
+renderCart();
+};
 
-    row.append(details,remove);
-    container.appendChild(row);
-  });
+row.append(details,remove);
+container.appendChild(row);
+});
 
-  const total = cart.reduce((sum,item) =>
-    sum + item.price * item.qty,0
-  );
+const total=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
+document.getElementById("total").textContent=
+"TOTAL: ₱"+total.toLocaleString("en-PH");
 
-  document.getElementById("total").textContent =
-    "TOTAL: ₱" + total.toLocaleString("en-PH");
-
-  checkoutBtn.disabled = false;
+checkoutBtn.disabled=false;
 }
 
 function updateOrderSummary(){
-  const summary = cart.map(item =>
-    item.name + " | Size: " + item.size +
-    " | Quantity: " + item.qty +
-    " | Subtotal: ₱" + (item.price * item.qty)
-  ).join("\n");
+const summary=cart.map(item=>
+item.name+" | Size: "+item.size+
+" | Quantity: "+item.qty+
+" | Subtotal: ₱"+(item.price*item.qty)
+).join("\n");
 
-  const total = cart.reduce((sum,item) =>
-    sum + item.price * item.qty,0
-  );
+const total=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
 
-  document.getElementById("orderSummary").value =
-    summary + "\nTOTAL: ₱" + total;
+document.getElementById("orderSummary").value=
+summary+"\nTOTAL: ₱"+total;
+
+document.getElementById("gcashAmount").textContent=
+"₱"+total.toLocaleString("en-PH");
 }
 
 function showCheckout(){
-  if(cart.length === 0) return;
+if(cart.length===0)return;
 
-  document.getElementById("checkout").style.display = "block";
-  updateOrderSummary();
+document.getElementById("checkout").style.display="block";
+updateOrderSummary();
 
-  document.getElementById("checkout").scrollIntoView({
-    behavior:"smooth",
-    block:"start"
-  });
+document.getElementById("checkout").scrollIntoView({
+behavior:"smooth",block:"start"
+});
+}
+
+function copyGCash(){
+const number=document.getElementById("gcashNumber").textContent;
+
+if(!navigator.clipboard){
+alert("Please copy the GCash number manually: "+number);
+return;
+}
+
+navigator.clipboard.writeText(number)
+.then(()=>alert("GCash number copied!"))
+.catch(()=>alert("Please copy the GCash number manually: "+number));
 }
 
 document.getElementById("orderForm").addEventListener("submit",function(e){
-  if(cart.length === 0){
-    e.preventDefault();
-    alert("Your cart is empty.");
-    return;
-  }
+if(cart.length===0){
+e.preventDefault();
+alert("Your cart is empty.");
+return;
+}
 
-  updateOrderSummary();
+updateOrderSummary();
 
-  const btn = document.getElementById("submitBtn");
-  btn.disabled = true;
-  btn.textContent = "SENDING ORDER...";
+const btn=document.getElementById("submitBtn");
+btn.disabled=true;
+btn.textContent="SENDING ORDER...";
 });
 </script>
 
