@@ -232,9 +232,24 @@ SUBMIT ORDER FOR VERIFICATION
 
 <footer>© 2026 4PLUG. ALL RIGHTS RESERVED.</footer>
 
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- EMAILJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
+
+/* SUPABASE CONFIGURATION */
+const SUPABASE_URL = "https://uqayakocfnufjtljddrx.supabase.co";
+const SUPABASE_KEY = "sb_publishable_fVBL0fMkLhqpUVbDKNYCJQ_MYyitz_i";
+const STORAGE_BUCKET = "payment-receipts";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
 /* EMAILJS CONFIGURATION */
 const EMAILJS_SERVICE_ID = "service_j6a29hq";
 const EMAILJS_TEMPLATE_ID = "template_2oxrci3";
@@ -247,6 +262,7 @@ emailjs.init({
 let cart = [];
 
 function addToCart(name,price,sizeId,qtyId){
+
 const size=document.getElementById(sizeId).value;
 const qty=Number(document.getElementById(qtyId).value);
 
@@ -266,28 +282,36 @@ existing.qty+=qty;
 }else{
 cart.push({name,price,size,qty});
 }
+
 renderCart();
 alert(name+" added to cart!");
+
 }
 
 function renderCart(){
+
 const container=document.getElementById("cartItems");
 const checkoutBtn=document.getElementById("checkoutBtn");
 
 if(cart.length===0){
+
 container.textContent="Your cart is empty.";
 document.getElementById("total").textContent="TOTAL: ₱0";
 checkoutBtn.disabled=true;
 document.getElementById("checkout").style.display="none";
+
 return;
 }
 
 container.innerHTML="";
+
 cart.forEach((item,index)=>{
+
 const row=document.createElement("div");
 row.className="cart-item";
 
 const details=document.createElement("span");
+
 details.textContent=item.name+" | SIZE "+item.size+
 " | QTY "+item.qty+" | ₱"+
 (item.price*item.qty).toLocaleString("en-PH");
@@ -295,6 +319,7 @@ details.textContent=item.name+" | SIZE "+item.size+
 const remove=document.createElement("button");
 remove.className="remove";
 remove.textContent="REMOVE";
+
 remove.onclick=()=>{
 cart.splice(index,1);
 renderCart();
@@ -302,16 +327,20 @@ renderCart();
 
 row.append(details,remove);
 container.appendChild(row);
+
 });
 
 const total=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
+
 document.getElementById("total").textContent=
 "TOTAL: ₱"+total.toLocaleString("en-PH");
 
 checkoutBtn.disabled=false;
+
 }
 
 function updateOrderSummary(){
+
 const summary=cart.map(item=>
 item.name+" | Size: "+item.size+
 " | Quantity: "+item.qty+
@@ -326,23 +355,29 @@ summary+"\nTOTAL: ₱"+total.toLocaleString("en-PH");
 document.getElementById("gcashAmount").textContent=
 "₱"+total.toLocaleString("en-PH");
 
-document.getElementById("formTotal").value=
-"₱"+total.toLocaleString("en-PH");
+document.getElementById("formTotal").value=total;
+
 }
 
 function showCheckout(){
+
 if(cart.length===0)return;
 
 document.getElementById("checkout").style.display="block";
+
 updateOrderSummary();
 
 document.getElementById("checkout").scrollIntoView({
-behavior:"smooth",block:"start"
+behavior:"smooth",
+block:"start"
 });
+
 }
 
 function generateOrderNumber(){
+
 const date=new Date();
+
 const datePart=
 date.getFullYear().toString()+
 String(date.getMonth()+1).padStart(2,"0")+
@@ -351,9 +386,11 @@ String(date.getDate()).padStart(2,"0");
 const randomPart=Math.floor(1000+Math.random()*9000);
 
 return "4PLUG-"+datePart+"-"+randomPart;
+
 }
 
-/* EMAILJS ORDER SUBMISSION */
+/* SUBMIT ORDER TO SUPABASE AND EMAILJS */
+
 document.getElementById("orderForm").addEventListener("submit",async function(e){
 
 e.preventDefault();
@@ -383,50 +420,176 @@ alert("Receipt image must be smaller than 8 MB.");
 return;
 }
 
+const referenceNumber=form.gcash_reference_number.value.trim();
+
+if(!referenceNumber){
+alert("Please enter your GCash reference number.");
+return;
+}
+
 updateOrderSummary();
 
 const btn=document.getElementById("submitBtn");
-btn.disabled=true;
-btn.textContent="SENDING ORDER...";
 
-const orderId=generateOrderNumber();
-document.getElementById("formOrderId").value=orderId;
+btn.disabled=true;
+btn.textContent="UPLOADING RECEIPT...";
+
+const orderNumber=generateOrderNumber();
+
+document.getElementById("formOrderId").value=orderNumber;
+
+const total=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
+
+const orderDetails=cart.map(item=>
+item.name+" | Size: "+item.size+
+" | Quantity: "+item.qty+
+" | Subtotal: ₱"+(item.price*item.qty).toLocaleString("en-PH")
+).join("\n");
+
+let receiptPath=null;
+let orderSaved=false;
 
 try{
 
-/* SEND ORDER DETAILS AND RECEIPT DIRECTLY THROUGH EMAILJS */
+/* 1. UPLOAD RECEIPT TO PRIVATE SUPABASE STORAGE */
+
+const safeFileName=receipt.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+
+receiptPath=orderNumber+"/"+Date.now()+"-"+safeFileName;
+
+const {error:uploadError}=await supabaseClient
+.storage
+.from(STORAGE_BUCKET)
+.upload(receiptPath,receipt,{
+contentType:receipt.type,
+upsert:false
+});
+
+if(uploadError){
+throw new Error("Receipt upload failed: "+uploadError.message);
+}
+
+/* 2. SAVE CUSTOMER ORDER TO SUPABASE */
+
+btn.textContent="SAVING ORDER...";
+
+const orderData={
+
+order_number:orderNumber,
+
+customer_name:form.customer_name.value.trim(),
+
+email:form.email.value.trim(),
+
+contact_number:form.contact_number.value.trim(),
+
+delivery_address:form.delivery_address.value.trim(),
+
+order_details:orderDetails,
+
+total:total,
+
+payment_method:"GCash",
+
+gcash_reference_number:referenceNumber,
+
+receipt_path:receiptPath,
+
+payment_status:"pending",
+
+order_status:"pending_payment"
+
+};
+
+const {error:orderError}=await supabaseClient
+.from("orders")
+.insert([orderData]);
+
+if(orderError){
+
+throw new Error("Order saving failed: "+orderError.message);
+
+}
+
+orderSaved=true;
+
+/* 3. SEND EMAIL NOTIFICATION */
+
+btn.textContent="SENDING EMAIL...";
+
+let emailSent=true;
+
+try{
+
 await emailjs.sendForm(
 EMAILJS_SERVICE_ID,
 EMAILJS_TEMPLATE_ID,
 form
 );
 
-alert(
-"ORDER SUBMITTED SUCCESSFULLY!\n\n"+
-"Order Number: "+orderId+
-"\n\nYour order is pending payment verification."
-);
+}catch(emailError){
+
+console.error("EmailJS error:",emailError);
+emailSent=false;
+
+}
+
+/* 4. SUCCESS MESSAGE */
 
 cart=[];
 renderCart();
+
 form.reset();
+
 document.getElementById("checkout").style.display="none";
 
 btn.disabled=false;
 btn.textContent="SUBMIT ORDER FOR VERIFICATION";
 
+if(emailSent){
+
+alert(
+"ORDER SUBMITTED SUCCESSFULLY!\n\n"+
+"Order Number: "+orderNumber+
+"\n\nYour order has been saved.\n"+
+"Your payment is PENDING VERIFICATION."
+);
+
+}else{
+
+alert(
+"ORDER SAVED SUCCESSFULLY!\n\n"+
+"Order Number: "+orderNumber+
+"\n\nYour order and receipt are saved in Supabase.\n"+
+"However, the email notification failed. Please check EmailJS."
+);
+
+}
+
 }catch(error){
 
-console.error("EmailJS submission error:",error);
+console.error("Order submission error:",error);
 
 btn.disabled=false;
 btn.textContent="SUBMIT ORDER FOR VERIFICATION";
 
+if(orderSaved){
+
+alert(
+"Your order was saved, but another step failed.\n\n"+
+"Order Number: "+orderNumber+
+"\n\nPlease do not submit the same order again. Check your Supabase order record first."
+);
+
+}else{
+
 alert(
 "ORDER SUBMISSION FAILED.\n\n"+
-"Please try again. No successful submission was confirmed.\n\n"+
-"Error: "+(error.text||error.message||"Please check your EmailJS settings.")
+"No successful order submission was confirmed.\n\n"+
+"Error: "+error.message
 );
+
+}
 
 }
 
