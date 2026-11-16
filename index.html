@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4PLUG | Official Store</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#100b16;
+  color:white;
+  font-family:Arial,sans-serif;
+}
+header{
+  padding:25px 7%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #382344;
+}
+.brand{font-size:25px;font-weight:900;letter-spacing:4px}
+header a{color:white;text-decoration:none;font-size:13px}
+.hero{
+  text-align:center;
+  padding:65px 20px 45px;
+  background:linear-gradient(#170d20dd,#100b16ee),
+  url('4g.jpg') center/cover;
+}
+.hero h1{font-size:clamp(45px,9vw,85px);letter-spacing:8px}
+.hero p{color:#c9a8d8;margin-top:12px;letter-spacing:3px}
+main{padding:35px 7% 70px}
+.heading{margin-bottom:25px}
+.heading h2{font-size:25px}
+.heading p{color:#ae9bb8;margin-top:7px;font-size:13px}
+.products{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:22px;
+}
+.product img{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:contain;
+  background:#21172a;
+  border-radius:5px;
+}
+.product h3{margin-top:14px;font-size:17px}
+.price{color:#d49aff;margin-top:8px;font-weight:bold}
+.order{
+  display:inline-block;
+  margin-top:13px;
+  padding:12px 22px;
+  background:#a34bd1;
+  color:white;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:bold;
+  border-radius:3px;
+}
+footer{
+  text-align:center;
+  padding:30px;
+  border-top:1px solid #382344;
+  color:#a99aaa;
+  font-size:12px;
+}
+@media(max-width:550px){
+  main{padding:30px 15px}
+  .products{gap:12px}
+  .product h3{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">4PLUG®</div>
+  <a href="#collection">COLLECTION</a>
+</header>
+
+<section class="hero">
+  <h1>4PLUG</h1>
+  <p>BUILT DIFFERENT. WORN DIFFERENT.</p>
+</section>
+
+<main id="collection">
+  <div class="heading">
+    <h2>NEW COLLECTION</h2>
+    <p>OFFICIAL 4PLUG DROP</p>
+  </div>
+
+  <div class="products">
+    <div class="product">
+      <img src="4g%20black.jpg" alt="4PLUG Black Tee">
+      <h3>4PLUG BLACK TEE</h3>
+      <p class="price">₱550</p>
+      <a class="order" href="https://m.me/" target="_blank">ORDER NOW</a>
+    </div>
+
+    <div class="product">
+      <img src="4g.jpg" alt="4PLUG White Tee">
+      <h3>4PLUG WHITE TEE</h3>
+      <p class="price">₱550</p>
+      <a class="order" href="https://m.me/" target="_blank">ORDER NOW</a>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 4PLUG. ALL RIGHTS RESERVED.</footer>
+
+</body>
+</html>
