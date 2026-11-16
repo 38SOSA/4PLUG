@@ -232,10 +232,7 @@ SUBMIT ORDER FOR VERIFICATION
 
 <footer>© 2026 4PLUG. ALL RIGHTS RESERVED.</footer>
 
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- EMAILJS -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
@@ -243,7 +240,7 @@ SUBMIT ORDER FOR VERIFICATION
 /* SUPABASE CONFIGURATION */
 const SUPABASE_URL = "https://uqayakocfnufjtljddrx.supabase.co";
 const SUPABASE_KEY = "sb_publishable_fVBL0fMkLhqpUVbDKNYCJQ_MYyitz_i";
-const STORAGE_BUCKET = "payment-receipts";
+const STORAGE_BUCKET = "4PLUG";
 
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
@@ -451,7 +448,7 @@ let orderSaved=false;
 
 try{
 
-/* 1. UPLOAD RECEIPT TO PRIVATE SUPABASE STORAGE */
+/* 1. UPLOAD RECEIPT TO SUPABASE STORAGE */
 
 const safeFileName=receipt.name.replace(/[^a-zA-Z0-9._-]/g,"_");
 
@@ -476,27 +473,16 @@ btn.textContent="SAVING ORDER...";
 const orderData={
 
 order_number:orderNumber,
-
 customer_name:form.customer_name.value.trim(),
-
 email:form.email.value.trim(),
-
 contact_number:form.contact_number.value.trim(),
-
 delivery_address:form.delivery_address.value.trim(),
-
 order_details:orderDetails,
-
 total:total,
-
 payment_method:"GCash",
-
 gcash_reference_number:referenceNumber,
-
 receipt_path:receiptPath,
-
 payment_status:"pending",
-
 order_status:"pending_payment"
 
 };
@@ -506,9 +492,7 @@ const {error:orderError}=await supabaseClient
 .insert([orderData]);
 
 if(orderError){
-
 throw new Error("Order saving failed: "+orderError.message);
-
 }
 
 orderSaved=true;
