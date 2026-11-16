@@ -124,34 +124,28 @@ main{padding:30px 15px}
 <h2>CHECKOUT</h2>
 <p>COMPLETE YOUR DETAILS AND PAYMENT TO SUBMIT YOUR ORDER.</p>
 
-<form id="orderForm"
-action="https://formsubmit.co/kentrellpaz@gmail.com"
-method="POST"
-enctype="multipart/form-data">
+<form id="orderForm" enctype="multipart/form-data">
 
-<input type="hidden" name="_subject" value="NEW 4PLUG ORDER - PAYMENT RECEIPT">
-<input type="hidden" name="_template" value="table">
-<input type="hidden" name="_captcha" value="true">
-<input type="hidden" name="_next" value="https://4plugstorec.netlify.app/">
-<input type="hidden" name="Order Details" id="orderSummary">
-<input type="hidden" name="Order Number" id="formOrderId">
-<input type="hidden" name="Order Status" value="PENDING PAYMENT VERIFICATION">
+<input type="hidden" name="order_details" id="orderSummary">
+<input type="hidden" name="order_id" id="formOrderId">
+<input type="hidden" name="total" id="formTotal">
+<input type="hidden" name="payment_method" value="GCash">
 
 <label>FULL NAME</label>
-<input type="text" name="Customer Name" placeholder="Your full name" required>
+<input type="text" name="customer_name" placeholder="Your full name" required>
 
 <label>EMAIL ADDRESS</label>
-<input type="email" name="Customer Email" placeholder="Your email address" required>
+<input type="email" name="email" placeholder="Your email address" required>
 
 <label>CONTACT NUMBER</label>
-<input type="tel" name="Contact Number" placeholder="Your contact number" required>
+<input type="tel" name="contact_number" placeholder="Your contact number" required>
 
 <label>DELIVERY ADDRESS</label>
-<textarea name="Delivery Address" placeholder="Complete delivery address" required></textarea>
+<textarea name="delivery_address" placeholder="Complete delivery address" required></textarea>
 
 <label>PAYMENT METHOD</label>
-<select name="Payment Method" required>
-<option value="GCash">GCash</option>
+<select required disabled>
+<option>GCash</option>
 </select>
 
 <div class="payment-note">
@@ -222,7 +216,7 @@ JPG or PNG only. Maximum file size: 8 MB.
 </div>
 
 <label>GCASH REFERENCE NUMBER</label>
-<input type="text" name="GCash Reference Number" placeholder="Enter your GCash reference number" required>
+<input type="text" name="gcash_reference_number" placeholder="Enter your GCash reference number" required>
 
 <div class="status-note">
 Uploading a receipt does not automatically confirm payment. Your order will remain pending until payment is verified.
@@ -238,7 +232,6 @@ SUBMIT ORDER FOR VERIFICATION
 
 <footer>© 2026 4PLUG. ALL RIGHTS RESERVED.</footer>
 
-<!-- EmailJS browser SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
@@ -332,6 +325,9 @@ summary+"\nTOTAL: ₱"+total.toLocaleString("en-PH");
 
 document.getElementById("gcashAmount").textContent=
 "₱"+total.toLocaleString("en-PH");
+
+document.getElementById("formTotal").value=
+"₱"+total.toLocaleString("en-PH");
 }
 
 function showCheckout(){
@@ -345,7 +341,6 @@ behavior:"smooth",block:"start"
 });
 }
 
-/* GENERATE ORDER NUMBER */
 function generateOrderNumber(){
 const date=new Date();
 const datePart=
@@ -358,7 +353,7 @@ const randomPart=Math.floor(1000+Math.random()*9000);
 return "4PLUG-"+datePart+"-"+randomPart;
 }
 
-/* ORDER SUBMISSION + CUSTOMER EMAIL */
+/* EMAILJS ORDER SUBMISSION */
 document.getElementById("orderForm").addEventListener("submit",async function(e){
 
 e.preventDefault();
@@ -394,56 +389,49 @@ const btn=document.getElementById("submitBtn");
 btn.disabled=true;
 btn.textContent="SENDING ORDER...";
 
-const customerName=form.elements["Customer Name"].value.trim();
-const customerEmail=form.elements["Customer Email"].value.trim();
-const paymentMethod=form.elements["Payment Method"].value;
-
-const total=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
-
 const orderId=generateOrderNumber();
-
 document.getElementById("formOrderId").value=orderId;
-
-const orderDetails=document.getElementById("orderSummary").value;
-
-/* PARAMETERS MUST MATCH EMAILJS TEMPLATE VARIABLES */
-const templateParams={
-email:customerEmail,
-customer_name:customerName,
-order_details:orderDetails,
-order_id:orderId,
-total:"₱"+total.toLocaleString("en-PH"),
-payment_method:paymentMethod
-};
 
 try{
 
-/* SEND CUSTOMER ORDER CONFIRMATION */
-await emailjs.send(
+/* SEND ORDER DETAILS AND RECEIPT DIRECTLY THROUGH EMAILJS */
+await emailjs.sendForm(
 EMAILJS_SERVICE_ID,
 EMAILJS_TEMPLATE_ID,
-templateParams
+form
 );
 
-btn.textContent="SUBMITTING YOUR ORDER...";
+alert(
+"ORDER SUBMITTED SUCCESSFULLY!\n\n"+
+"Order Number: "+orderId+
+"\n\nYour order is pending payment verification."
+);
 
-/* SUBMIT RECEIPT AND ORDER DETAILS TO FORMSubmit */
-form.submit();
+cart=[];
+renderCart();
+form.reset();
+document.getElementById("checkout").style.display="none";
+
+btn.disabled=false;
+btn.textContent="SUBMIT ORDER FOR VERIFICATION";
 
 }catch(error){
 
-console.error("EmailJS error:",error);
+console.error("EmailJS submission error:",error);
 
 btn.disabled=false;
 btn.textContent="SUBMIT ORDER FOR VERIFICATION";
 
 alert(
-"Your order confirmation email could not be sent. Please try again. Your order has not been submitted yet."
+"ORDER SUBMISSION FAILED.\n\n"+
+"Please try again. No successful submission was confirmed.\n\n"+
+"Error: "+(error.text||error.message||"Please check your EmailJS settings.")
 );
 
 }
 
 });
+
 </script>
 
 </body>
